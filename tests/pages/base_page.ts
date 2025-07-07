@@ -28,7 +28,7 @@ export class BasePage {
 
     }
     async getPageTitle() {
-        await test.step('Получаем title страницы', async() => {
+        await test.step('Get page title', async() => {
             return await this.page.title();
         })
 
@@ -62,7 +62,7 @@ export class BasePage {
 
     }
     async closeSelectLanguagePopup(): Promise<void> {
-        await test.step(' Close popup Select Language if visible', async() => {
+        await test.step('Close popup Select Language if visible', async() => {
             await this.yesButtonPopupSelectLanguage.click();
         })
     }
@@ -74,20 +74,38 @@ export class BasePage {
     }
 
     async selectAnotherRegionInPopup(): Promise<void>{
-        await test.step('Select -No, go to another- in select language popup', async()=>{
+        await test.step('Select |No, go to another| in select language popup', async()=>{
             await this.noButtonPopupSelectLanguage.click();
         })
     }
 
     async selectYesOnRegionPopup(): Promise<void>{
-        await test.step('Select -Yes- in select region popup', async()=> {
-            await this.noButtonPopupSelectLanguage.click();
+        await test.step('Select |Yes| in select region popup', async()=> {
+            await this.yesButtonPopupSelectLanguage.click();
         })
     }
+    async compareScreenshot(
+        screenshotName: string,
+        options?: {
+            locator?: Locator,         // если нужен скриншот только элемента
+            mask?: Locator[],          // массив локаторов для маскировки
+            fullPage?: boolean,        // полный скриншот страницы
+            message?: string           // кастомное сообщение
+        }
+    ) {
+        const { locator, mask, fullPage, message } = options || {};
 
-
-    
-
+        if (locator) {
+            await expect(locator, message).toHaveScreenshot(screenshotName, {
+                mask,
+            });
+        } else {
+            await expect(this.page, message).toHaveScreenshot(screenshotName, {
+                mask,
+                fullPage,
+            });
+        }
+}
     
     
 
